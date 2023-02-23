@@ -58,17 +58,17 @@ class cli:
 		self.gregos.color=not self.player.color
 		i=1
 		while 1:
+			print(self.board)
 			if i%2==self.player.color:
 				print(list(self.board.legal_moves))
-				a=input()
+				a=input("input:\n")
 				#self.player.move()
 				self.board.push_san(str(a))
 				#tmp=self.board.pop()#undo move for grekos suggestion
 				#self.gregos.move(best_move)
 			else:
-				best_move,score=minimax(self.board, 5, self.gregos.color, self.gregos.color, float('-inf'), float('inf'))
+				best_move,score=minimax(self.board, 6, self.gregos.color, self.gregos.color, float('-inf'), float('inf'))
 				print(best_move,score)
 				#self.gregos.move(best_move)
 				self.board.push_san(str(best_move))
 			i+=1
-			print(self.board)

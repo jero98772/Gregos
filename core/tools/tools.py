@@ -9,7 +9,7 @@ BANNER="""
   ____                          
  / ___|_ __ ___  __ _  ___  ___ 
 | |  _| '__/ _ \/ _` |/ _ \/ __|
-| |_| | | |  __/ (_| | (_) \__ \
+| |_| | | |  __/ (_| | (_) \__ \ 
  \____|_|  \___|\__, |\___/|___/
                 |___/           
 """
@@ -23,7 +23,7 @@ def speak(audioString:str,lang='es'):
 	os.system("mpg123 audio.mp3")
 def score_analisis(board:chess.Board(), my_color:bool):
 	"""
-	
+	score_analisis the heuristic , this function calculate the score of the board
 	"""
 	score = random.random() 
 	for (piece, value) in POINTS_BY_PIECE:
@@ -57,11 +57,9 @@ def minimax(board:chess.Board(), depth:int, maximizing_player, maximizing_color,
 	if maximizing_player:
 		max_eval = float('-inf')
 		for move in moves:
-			#board.make move (move[0], move[11])
 			board.push_san(str(move))    
 			current_eval = minimax (board, depth-1,False,maximizing_color,alpha,beta,)[1]
 			board.pop()
-			#board.unmake move()
 			if current_eval > max_eval:
 				max_eval = current_eval
 				best_move = move
@@ -84,3 +82,15 @@ def minimax(board:chess.Board(), depth:int, maximizing_player, maximizing_color,
 			if beta<=alpha:
 				break
 		return best_move, min_eval
+"""
+r n b . k b n r
+p p p p . p p p
+. . . . . . . .
+. . . . p . . .
+. . . . . . . R
+. . . P . . . .
+P P P . P P P .
+R N . Q K B N .
+
+
+"""
