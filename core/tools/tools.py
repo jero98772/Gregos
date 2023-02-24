@@ -13,7 +13,7 @@ BANNER="""
  \____|_|  \___|\__, |\___/|___/
                 |___/           
 """
-POINTS_BY_PIECE=[(chess.PAWN, 1), (chess.BISHOP, 4), (chess.KING, 0), (chess.QUEEN, 10), (chess.KNIGHT, 5),(chess.ROOK, 3)]
+POINTS_BY_PIECE=[(chess.PAWN, 1), (chess.BISHOP, 4), (chess.KING, 15), (chess.QUEEN, 10), (chess.KNIGHT, 5),(chess.ROOK, 3)]
 def speak(audioString:str,lang='es'):
 	"""
 	speak audioString variable using google text to speak and a system call
@@ -30,16 +30,28 @@ def score_analisis(board:chess.Board(), my_color:bool):
 		score+=len(board.pieces(piece, my_color)) * value#i can eat
 		score-=len(board.pieces(piece, not my_color)) * value#other can eat me
 	score += 100 if board.is_checkmate() else 0
+	score -= 50 if board.is_insufficient_material() else 0
+	score -= 10 if board.is_stalemate() else 0
+
 	#score += 10 if board.is_capture(move)  else 0#ahoga
 	#square =  str(move)[-2:]  
 	#myAttackers = board.attackers(not my_color,  chess.parse_square(square))
 	#score +=len(myAttackers)*-2
 	return score
+def winner(board:chess.Board(),turn:bool)->str:
+	"""
+	return a string the color of the winner
+	"""
+	if board.is_checkmate():
+		if turn:return "White Win"
+		else:return "Black Win"
+	else: 
+		return "No winner"
 def gameover(board:chess.Board())->bool:
 	"""
-	get board objet and return true if game is finish
+	get board objet and return boolean value ,true if game is finish
 	"""
-	return board.is_stalemate() or board.is_stalemate() #or board.outcome()#check how work outcome()
+	return board.is_stalemate() or board.is_insufficient_material() or board.is_checkmate() or board.is_seventyfive_moves() or board.is_variant_draw()
 
 def minimax(board:chess.Board(), depth:int, maximizing_player, maximizing_color,alpha,beta):
 	"""

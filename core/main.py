@@ -58,7 +58,7 @@ class cli:
 		self.gregos.color=not self.player.color
 		i=1
 		while 1:
-			print(self.board)
+			print(f'\n{self.board.unicode()}\n')
 			if i%2==self.player.color:
 				print(list(self.board.legal_moves))
 				a=input("input:\n")
