@@ -4,6 +4,7 @@
 import chess
 import os
 import random
+import chess.svg
 from gtts import gTTS
 BANNER="""
   ____                          
@@ -13,30 +14,57 @@ BANNER="""
  \____|_|  \___|\__, |\___/|___/
                 |___/           
 """
-POINTS_BY_PIECE=[(chess.PAWN, 1), (chess.BISHOP, 4), (chess.KING, 15), (chess.QUEEN, 10), (chess.KNIGHT, 5),(chess.ROOK, 3)]
-def speak(audioString:str,lang='es'):
+POINTS_BY_PIECE = [
+  (chess.PAWN,100),
+  (chess.KNIGHT,320),
+  (chess.BISHOP, 330),
+  (chess.ROOK, 500),
+  (chess.QUEEN, 900),
+  (chess.KING, 20000)
+]
+#def motivation():
+#	if is_capture
+def speak(audioString:str,path:str,lang='es'):
 	"""
 	speak audioString variable using google text to speak and a system call
 	"""
 	tts = gTTS(text=audioString,lang=lang)
-	tts.save("audio.mp3")
-	os.system("mpg123 audio.mp3")
+	tts.save(path)
+	os.system("mpg123 "+path)
+
+def all_attackers(board:chess.Board(),color:bool)->int:
+	"""
+	return a number of attackers for color
+	"""
+	total=0
+	for i in range(64):
+  		total+=len(board.attackers(color,i)) 
+	return total
+
+def save_board_as_image(board:chess.Board(),path:str):
+	"""
+	save board as image
+	"""
+	boardsvg = chess.svg.board(board)
+	outputfile = open(path+".svg", "w")
+	outputfile.write(boardsvg)
+	outputfile.close()
+
 def score_analisis(board:chess.Board(), my_color:bool):
 	"""
 	score_analisis the heuristic , this function calculate the score of the board
 	"""
-	score = random.random() 
+	score = random.random()*10
 	for (piece, value) in POINTS_BY_PIECE:
-		score+=len(board.pieces(piece, my_color)) * value#i can eat
-		score-=len(board.pieces(piece, not my_color)) * value#other can eat me
+		score+=len(board.pieces(piece, my_color)) * value
+		score-=len(board.pieces(piece, not my_color)) * value
 	score += 100 if board.is_checkmate() else 0
-	score -= 50 if board.is_insufficient_material() else 0
+	score -= 20 if board.is_insufficient_material() else 0
 	score -= 10 if board.is_stalemate() else 0
-
-	#score += 10 if board.is_capture(move)  else 0#ahoga
-	#square =  str(move)[-2:]  
-	#myAttackers = board.attackers(not my_color,  chess.parse_square(square))
-	#score +=len(myAttackers)*-2
+	
+	#add pawns structure
+	#score +=all_attackers(board,not my_color)
+	#score -=all_attackers(board,my_color)
 	return score
 def winner(board:chess.Board(),turn:bool)->str:
 	"""
@@ -47,62 +75,66 @@ def winner(board:chess.Board(),turn:bool)->str:
 		else:return "Black Win"
 	else: 
 		return "No winner"
+
 def gameover(board:chess.Board())->bool:
 	"""
-	get board objet and return boolean value ,true if game is finish
+	Function that is in charge of evaluating if the match has gotten to a stalemate point, if it did returns
+ 	True, otherwise returns False.
 	"""
 	return board.is_stalemate() or board.is_insufficient_material() or board.is_checkmate() or board.is_seventyfive_moves() or board.is_variant_draw()
 
-def minimax(board:chess.Board(), depth:int, maximizing_player, maximizing_color,alpha,beta):
-	"""
-	this function use minmax function alpha and beta pruning
-	minimax (board:chess.Board(), depth:int, maximizing_player, maximizing_color)
-	"""
-	if depth == 0 or gameover(board):#game over??
-		#return None, staticAnalysis(board, maximizing color)#evalute stattsic
+def alphabeta(board:chess.Board, depth:int, alpha:int, beta:int,  maximizing_player:bool, maximizing_color:bool) -> int:
+  """
+  This function implements the MinMax algorithm along with the Alpha-Beta pruning enhancement technique. 
+  Minmax is an heuristic search algorithm that finds the best possible way to make a play when there's multiple 
+  choices available. Also works with the help of Alpha-Beta pruning technique which iscommonly use to discard 
+  the choices (branches of the tree) that don't show any benefits respect to the solution.
+  """
+  if depth == 0 or board.is_game_over():
+    return score_analisis(board, maximizing_color)
+  # Generate legal moves
+  legal_moves = list(board.legal_moves)
+  # Randomize moves to avoid predictable move patterns
+  random.shuffle(legal_moves)
+  
+  if maximizing_player:
+    max_eval = float('-inf')
+    for move in legal_moves:
+      board.push(move)
+      eval = alphabeta(board, depth-1, alpha, beta, False, maximizing_color)
+      board.pop()
 
-		return None, score_analisis(board,maximizing_color)
-	#print(board)
-	moves=list(board.legal_moves)#board.get moves ()
-	#moves = board.get moves ()
-	best_move = random.choice(moves)
-	if maximizing_player:
-		max_eval = float('-inf')
-		for move in moves:
-			board.push_san(str(move))    
-			current_eval = minimax (board, depth-1,False,maximizing_color,alpha,beta,)[1]
-			board.pop()
-			if current_eval > max_eval:
-				max_eval = current_eval
-				best_move = move
-			alpha=max(alpha,current_eval)
-			if beta<=alpha:
-				break
-		return best_move, max_eval
-	else:
-		min_eval = float('inf')
-		for move in moves:
-			#board.make move (move[0], move[1])
-			board.push_san(str(move))    
-			current_eval = minimax(board, depth-1,True,maximizing_color,alpha,beta,)[1]
-			board.pop()
-			#board.unmake move ()
-			if current_eval < min_eval:
-				min_eval = current_eval
-				best_move=move
-			beta=min(alpha,current_eval)
-			if beta<=alpha:
-				break
-		return best_move, min_eval
-"""
-r n b . k b n r
-p p p p . p p p
-. . . . . . . .
-. . . . p . . .
-. . . . . . . R
-. . . P . . . .
-P P P . P P P .
-R N . Q K B N .
+      max_eval = max(max_eval, eval)
+      alpha = max(alpha, eval)
+      if beta <= alpha:
+          break
+    return max_eval
+  else:
+    min_eval = float('inf')
+    for move in legal_moves:
+      board.push(move)
+      eval = alphabeta(board, depth-1, alpha, beta, True, maximizing_color)
+      board.pop()
 
+      min_eval = min(min_eval, eval)
+      beta = min(beta, eval)
+      if beta <= alpha:
+          break
+    return min_eval
 
-"""
+def get_best_move(board:chess.Board, depth:int,  maximizing_player:bool, maximizing_color:bool):
+  """
+  Function that returns the best move using Alpha-Beta algorithm
+  """
+  best_move = None
+  max_eval = float('-inf')
+  alpha = float('-inf')
+  beta = float('inf')
+  for move in board.legal_moves:
+      board.push(move)
+      evalf = alphabeta(board, depth-1, alpha, beta,  maximizing_player, maximizing_color)
+      board.pop()
+      if evalf > max_eval:
+          max_eval = evalf
+          best_move = move
+  return best_move, max_eval

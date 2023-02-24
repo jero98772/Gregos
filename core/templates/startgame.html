@@ -1,0 +1,30 @@
+{% extends  'template.html'%}
+{% block content %}
+<center>
+	<pre>
+		{{ banner }}
+	</pre>
+	<form method="post" >
+		<h2>Chose you color</h2>
+		<select name="color">
+			<option>White</option>
+			<option>Black</option>
+		</select>
+		<h2>Chose game mode</h2>
+		<select name="mode">
+			<option>Player vs Machine</option>
+			<option>Machine vs Machine</option>
+		</select>
+		<br>
+		<h2>Artificial inteligence level</h2>
+		<select name="level">
+			{% for i in range(6)%}
+				<option>{{ i }}</option>
+			{% endfor %}
+		</select>
+		<br>
+		<br>
+		<input type="submit" value="Play">
+	</form>
+</center>
+{% endblock  %}
