@@ -9,8 +9,8 @@ performance in a real match.
 
 
 ### Screenshots
-[]()
-
+![1](https://github.com/jero98772/Gregos/blob/main/docs/screenshots/1.png)
+![2](https://github.com/jero98772/Gregos/blob/main/docs/screenshots/2.png)
 ### Installing
 **Download repositories**
 
