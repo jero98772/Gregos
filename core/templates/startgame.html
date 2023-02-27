@@ -13,14 +13,18 @@
 		<h2>Chose game mode</h2>
 		<select name="mode">
 			<option>Player vs Machine</option>
-			<option>Machine vs Machine</option>
 		</select>
 		<br>
 		<h2>Artificial inteligence level</h2>
 		<select name="level">
-			{% for i in range(6)%}
+			{% for i in range(1,6)%}
 				<option>{{ i }}</option>
 			{% endfor %}
+		</select>
+		<h2>Audio</h2>
+			<select name="audio">
+				<option>True</option>
+				<option>False</option>
 		</select>
 		<br>
 		<br>
