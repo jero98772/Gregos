@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*- 
 #Gregos - by [jero98772,camilo,GianSz,camilo_alvarez,igatsi]
 import chess
+from multiprocessing import Pool
+
 import os
 import random
 import chess.svg
@@ -85,10 +87,10 @@ def gameover(board:chess.Board())->bool:
 
 def alphabeta(board:chess.Board, depth:int, alpha:int, beta:int,  maximizing_player:bool, maximizing_color:bool) -> int:
   """
-  This function implements the MinMax algorithm along with the Alpha-Beta pruning enhancement technique. 
-  Minmax is an heuristic search algorithm that finds the best possible way to make a play when there's multiple 
-  choices available. Also works with the help of Alpha-Beta pruning technique which iscommonly use to discard 
-  the choices (branches of the tree) that don't show any benefits respect to the solution.
+  #This function implements the MinMax algorithm along with the Alpha-Beta pruning enhancement technique. 
+  #Minmax is an heuristic search algorithm that finds the best possible way to make a play when there's multiple 
+  #choices available. Also works with the help of Alpha-Beta pruning technique which iscommonly use to discard 
+  #the choices (branches of the tree) that don't show any benefits respect to the solution.
   """
   if depth == 0 or board.is_game_over():
     return score_analisis(board, maximizing_color)
@@ -138,3 +140,88 @@ def get_best_move(board:chess.Board, depth:int,  maximizing_player:bool, maximiz
           max_eval = evalf
           best_move = move
   return best_move, max_eval
+
+#### to tests of multi ->
+ 
+from multiprocessing import Pool
+
+def alphabeta(board:chess.Board, depth:int, alpha:int, beta:int, maximizing_player:bool, maximizing_color:bool) -> int:
+    """
+    This function implements the MinMax algorithm along with the Alpha-Beta pruning enhancement technique.
+    Minmax is an heuristic search algorithm that finds the best possible way to make a play when there's multiple
+    choices available. Also works with the help of Alpha-Beta pruning technique which is commonly used to discard
+    the choices (branches of the tree) that don't show any benefits respect to the solution.
+    """
+    if depth == 0 or board.is_game_over():
+        return score_analisis(board, maximizing_color)
+
+    legal_moves = list(board.legal_moves)
+    random.shuffle(legal_moves)
+
+    if maximizing_player:
+        max_eval = float('-inf')
+
+        # Divide legal_moves into several sublists
+        num_sublists = 4
+        chunk_size = len(legal_moves) // num_sublists
+        move_sublists = [legal_moves[i:i + chunk_size] for i in range(0, len(legal_moves), chunk_size)]
+
+        # Use multiprocessing pool to search each sublist in parallel
+        with Pool(processes=num_sublists) as pool:
+            results = pool.starmap(parallel_search, [(board, depth, alpha, beta, False, maximizing_color, moves) for moves in move_sublists])
+
+        # Combine the results from each sublist
+        for result in results:
+            max_eval = max(max_eval, result)
+            alpha = max(alpha, result)
+            if beta <= alpha:
+                break
+
+        return max_eval
+    else:
+        min_eval = float('inf')
+
+        # Divide legal_moves into several sublists
+        num_sublists = 4
+        chunk_size = len(legal_moves) // num_sublists
+        move_sublists = [legal_moves[i:i + chunk_size] for i in range(0, len(legal_moves), chunk_size)]
+
+        # Use multiprocessing pool to search each sublist in parallel
+        with Pool(processes=num_sublists) as pool:
+            results = pool.starmap(parallel_search, [(board, depth, alpha, beta, True, maximizing_color, moves) for moves in move_sublists])
+
+        # Combine the results from each sublist
+        for result in results:
+            min_eval = min(min_eval, result)
+            beta = min(beta, result)
+            if beta <= alpha:
+                break
+
+        return min_eval
+
+def parallel_search(board, depth, alpha, beta, maximizing_player, maximizing_color, legal_moves):
+    if maximizing_player:
+        max_eval = float('-inf')
+        for move in legal_moves:
+            board.push(move)
+            eval = alphabeta(board, depth-1, alpha, beta, False, maximizing_color)
+            board.pop()
+
+            max_eval = max(max_eval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return max_eval
+    else:
+        min_eval = float('inf')
+        for move in legal_moves:
+            board.push(move)
+            eval = alphabeta(board, depth-1, alpha, beta, True, maximizing_color)
+            board.pop()
+
+            min_eval = min(min_eval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+              break
+        return min_eval
+
