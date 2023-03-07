@@ -11,6 +11,6 @@ setup(
 	description='',
 	url='https://github.com/jero98772/Gregos',
 	packages=find_packages(),
-    install_requires=['Flask', 'chess', 'gtts'],
+    install_requires=['Flask', 'chess', 'gtts','pandas'],
     include_package_data=True,
 	)

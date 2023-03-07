@@ -3,7 +3,6 @@
 #Gregos - by [jero98772,camilo,GianSz,camilo_alvarez,igatsi]
 from .tools.tools import *
 from flask import Flask, render_template ,request,redirect
-import time
 
 app = Flask(__name__)
 
@@ -13,12 +12,13 @@ BOARD_IMG_PATH="core/static/img/tmp"
 
 class play:
 	def __init__(self,player=None,depth=4):
-		self.gregos=not player
-		self.player=player
+		self.gregos = not player
+		self.player = player
 		self.board = chess.Board()
-		self.turn=1
-		self.depth=depth
-		self.audio=1
+		self.turn = 1
+		self.depth = depth
+		self.audio = 1
+		self.openings=pd.read_csv("data/openings.csv",sep=",")
 	def get_board(self):
 		return self.board
 		#in future we add a langue option 	

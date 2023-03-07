@@ -3,11 +3,12 @@
 #Gregos - by [jero98772,camilo,GianSz,camilo_alvarez,igatsi]
 import chess
 from multiprocessing import Pool
-
 import os
 import random
 import chess.svg
 from gtts import gTTS
+import pandas
+
 BANNER="""
   ____                          
  / ___|_ __ ___  __ _  ___  ___ 
@@ -24,8 +25,10 @@ POINTS_BY_PIECE = [
   (chess.QUEEN, 900),
   (chess.KING, 20000)
 ]
-#def motivation():
-#	if is_capture
+
+def openingAI(move:str,dataframe):
+  dataframe[]
+
 def speak(audioString:str,path:str,lang='es'):
 	"""
 	speak audioString variable using google text to speak and a system call
