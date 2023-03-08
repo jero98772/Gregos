@@ -54,7 +54,6 @@ class webpage():
 	@app.route("/game/PlayervsMachine",methods=['POST','GET'])	
 	def PlayervsMachine():
 		save_board_as_image(player.get_board(),BOARD_IMG_PATH)
-
 		if player.turn%2==player.gregos:#gregos play
 			best_move,score=get_best_move(player.board, player.depth, player.gregos, player.gregos)
 			gregos_move=best_move
@@ -86,5 +85,6 @@ class webpage():
 			if player.audio:
 				speak(player.greetingEn(),AUDIO_PATH,lang="en")
 			gregos_move="<pre>"+player.greetingBannerEn()+"</pre>"
+		#fix format#player.openings=calculate_posibles_openings("e4",player.turn-1,"moves",player.openings["opening_name"],player.openings)
 		return render_template("play.html",gregos_move=gregos_move,moves=legal_moves,gregos_turn=(player.turn%2==player.gregos))
 
