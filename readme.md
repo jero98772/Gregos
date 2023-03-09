@@ -23,3 +23,5 @@ performance in a real match.
 **Run:**  
     
     python Gregos.py
+
+open [localhost:9600](localhost:9600) and enjoy
