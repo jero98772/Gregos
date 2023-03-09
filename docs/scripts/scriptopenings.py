@@ -15,9 +15,7 @@ def openingAIbycolumns(move:str,turn:int,cols:list,dataframe):
 def calculate_posibles_openings(move:str,turn:int,colname:str,rows:list,dataframe):
 	for i in range(len(rows)):
 		try:
-			#print(dataframe[colname][i].split()[turn],move,dataframe[colname][i].split())
 			if dataframe[colname][i].split()[turn]!=move:
-				#print("no equak")
 				dataframe=dataframe.drop(index=i)
 		except:
 			dataframe=dataframe.drop(index=i)
@@ -25,6 +23,7 @@ def calculate_posibles_openings(move:str,turn:int,colname:str,rows:list,datafram
 	return dataframe.reset_index(drop=True)
 
 def test2():
+	a=""
 	df=pd.read_csv("chess_openings.csv")#.head(15000)
 	print(len(df),"\n",df)
 	df=calculate_posibles_openings("e4",0,"moves",df["opening_name"],df)
@@ -41,4 +40,16 @@ def test2():
 	time.sleep(1)
 	df=calculate_posibles_openings("g3",4,"moves",df["opening_name"],df)
 	print(len(df),"\n",df)
+
+	if len(df)==1:
+		a=df["opening_name"][0]
+		print("open name",df["opening_name"][0])
+	df=calculate_posibles_openings("g5",5,"moves",df["opening_name"],df)
+	#print("end")
+	df=calculate_posibles_openings("g5",6,"moves",df["opening_name"],df)
+	#print("end")
+	df=calculate_posibles_openings("g5",7,"moves",df["opening_name"],df)
+	print("end",a)
+	print(len(df),"\n",df)
+
 test2()
