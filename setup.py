@@ -4,7 +4,7 @@
 from setuptools import setup, find_packages
 setup(
 	name='Gregos',
-	version='1.0.0',
+	version='1.1.0',
 	license='GPLv3',
 	author_email='jero98772@protonmail.com',
 	author='jero98772,camilo,GianSz,camilo_alvarez,igatsi',
