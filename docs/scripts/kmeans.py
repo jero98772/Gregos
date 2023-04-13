@@ -6,13 +6,28 @@ from pyspark.ml.clustering import KMeans
 from pyspark.ml.evaluation import ClusteringEvaluator 
 from pyspark.ml.feature import OneHotEncoder, StringIndexer
 from pyspark.ml import Pipeline
+from pyspark.sql.functions import col, udf
+from pyspark.sql.types import ArrayType,StringType
+import pyspark.pandas as ps
+
+def uci2algebraic(move:str,board:chess.Board()):
+  """
+  convert from uci notation to algebraic notation
+  """
+  movef=chess.Move.from_uci(move)
+  return board.san(movef)
+
 SparkContext.setSystemProperty('spark.executor.memory', '60g')
 sc = SparkContext("local", "App Name")
 print(sc._conf.get('spark.executor.memory'))
 
 spark=SparkSession.builder.getOrCreate()
-df=spark.read.csv("chess_openings.csv",inferSchema=True,header=True).limit(10000)
-#df=df.limit(10).collect()
+df=spark.read.csv("chess_openings.csv",inferSchema=True,header=True).limit(5000)
+
+split = udf(lambda x:x.split(),ArrayType(StringType())) 
+#df=df.withColumn("moves", split(col("moves")))
+
+
 df.show()
 df.count()
 df.createOrReplaceTempView("chess_opening")
@@ -22,14 +37,14 @@ data=df
 indexer = StringIndexer(inputCol="moves", outputCol="movesIndex")
 indexed = indexer.fit(df).transform(df)
 encoder = OneHotEncoder(inputCol="movesIndex", outputCol="movesVec")
-#encoded = encoder.transform(indexed)
+
 assembler = VectorAssembler(inputCols=['movesVec'], outputCol="features")
 pipeline = Pipeline(stages=[indexer, encoder, assembler])
 model = pipeline.fit(data)
 data = model.transform(data)
 
 
-k=1178
+k=908
 
 kmeans = KMeans(k=k, seed=1)
 model = kmeans.fit(data)
@@ -40,17 +55,7 @@ predictions = model.transform(data)
 
 predictions.show()
 
-#model=kmeans.fit(df)
-#model.transform("e4 e5 d4 d4").groupBy("prediction").count().show()
-print(model)
+evaluator = ClusteringEvaluator()
 
-"""df.printSchema()
-df.describe()
-le = SparkLabelEncoder()
-le.fit(y)
-vec_assembler=VectorAssembler(inputCols="moves",outputCol="opening_name")
-vec_assembler.transform(df)
-"""
-#a=set(df["opening_name"])
-#print(a)
-#print(len(a))
+silhouette_score = evaluator.evaluate(predictions)
+print("Silhouette with squared euclidean distance = " + str(silhouette_score))
