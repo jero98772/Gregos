@@ -55,6 +55,7 @@ class webpage():
 		
 	@app.route("/game/PlayervsMachine",methods=['POST','GET'])	
 	def PlayervsMachine():
+		win_probability=None
 		print(player.openings)
 		save_board_as_image(player.get_board(),BOARD_IMG_PATH)
 		
@@ -83,7 +84,7 @@ class webpage():
 				speak(msg,AUDIO_PATH,lang="en")
 			
 			player.turn+=1
-			return render_template("play.html",gregos_move=gregos_move,moves=legal_moves,gregos_turn=(player.turn%2==player.gregos),opening=player.opening)
+			return render_template("play.html",gregos_move=gregos_move,moves=legal_moves,gregos_turn=(player.turn%2==player.gregos),opening=player.opening,win_probability=win_probability)
 		
 		legal_moves=list(map(str,player.board.legal_moves))
 		if request.method == "POST":
@@ -104,5 +105,5 @@ class webpage():
 			if player.audio:
 				speak(player.greetingEn(),AUDIO_PATH,lang="en")
 			gregos_move="<pre>"+player.greetingBannerEn()+"</pre>"
-		return render_template("play.html",gregos_move=gregos_move,moves=legal_moves,gregos_turn=(player.turn%2==player.gregos),opening=player.opening)
+		return render_template("play.html",gregos_move=gregos_move,moves=legal_moves,gregos_turn=(player.turn%2==player.gregos),opening=player.opening,win_probability=win_probability)
 
