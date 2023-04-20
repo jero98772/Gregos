@@ -8,14 +8,18 @@ n="12345678"
 mytable = str.maketrans(l, n)
 def changeNotation(san_mainline):
 	san_mainline=san_mainline.split()
+	#ns=""
 	tmp=[]
 	for move in san_mainline:
 	    board.push_san(move)
 	for move in san_mainline:
 		m=str(board.pop()).translate(mytable)
-		#print(m)
+		print(m)
+		#ns+=m[:4]
 		tmp.append(int(m[:4]))
 	tmp.reverse()
+	tmp=str(tmp).replace("[","").replace("]","").replace(" ","").replace(",","")
+	print(tmp,"\n");exit()
 	#print(san_mainline)
 	return tmp
 
@@ -25,7 +29,7 @@ df=pd.read_csv("chess_openings.csv")#.head(5)
 df["moves"]=df["moves"].apply(changeNotation)
 print(df)
 newdf=pd.DataFrame({"opening_name":df["opening_name"],"moves":df["moves"]})
-newdf.to_csv("chess_openings3movestransalted.csv")
+#newdf.to_csv("chess_openings3movestransalted.csv")
 
 #l="abcdefgh"
 #n="12345678"
