@@ -18,16 +18,17 @@
 		{{ opening }}
 		<br>
 		{% if gregos_turn %}
-			<input type="submit" value="Next">
+			<input type="submit" value="{{ trad.next }}">
 		{% else %}
-			<input type="submit" value="Play">
-			<p>Available moves</p>
+			<input type="submit" value="{{ trad.play }}">
+			<p>{{ trad.Available_moves }}</p>
 			<select name="move">
 				{% for i in moves %}
 					<option> {{ i }}</option>
 				{% endfor %}
 			</select>
 		{% endif %}
+
 
 		</table>
 	</form>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#Gregos - by [jero98772,camilo,GianSz,camilo_alvarez,igatsi]
+#Gregos - by jero98772
 from core.main import webpage
 from core.main import app
 def main():
