@@ -6,10 +6,10 @@
 		<!-- i need show previus move for give the feedback of the other move, if player move show gregos move and otherwise-->
 		<!-- organize in a table-->
 		{% if gregos_turn %}
-			<p>Gregos recomend you </p>
+			<p>Gregos {{ trad.recomend_you }} </p>
 				{{ gregos_move | safe }}
 		{% else %}
-			<p>Gregos move</p>
+			<p>Gregos {{ trad.move }}</p>
 				{{ gregos_move | safe }}
 		{% endif %}
 		<br>

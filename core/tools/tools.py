@@ -27,7 +27,7 @@ POINTS_BY_PIECE = [
   (chess.KING, 20000)
 ]
 class play:
-  def __init__(self,player=None,depth=4):
+  def __init__(self,player=None,depth=4,lang="en"):
     self.gregos = not player
     self.player = player
     self.board = chess.Board()
@@ -36,20 +36,17 @@ class play:
     self.audio = 1
     self.openings=pd.read_csv("data/chess_openings.csv",sep=",").head(20000)
     self.opening=""
-    self.langue=None
+    self.langue=lang
+    self.langueWords=None
+
 
 
   def get_board(self):
     return self.board
     #in future we add a langue option   
-  def greetingEs(self):
-    return "hola soy Gregos y sere tu coach"
-  def greetingEn(self):
-    return "Hello i am Gregos an i will be your couch"
-  def greetingBannerEs(self):
-    return BANNER+"hola soy Gregos y sere tu coach"
-  def greetingBannerEn(self):
-    return BANNER+"Hello i am Gregos an i will be your couch "
+
+  def greeting(self):
+    return "Hello i am Gregos an i will be your trainer"
   #def __dict__(self):
     #return {"gregos":self.gregos,"player":self.player,"board":self.board}
 
@@ -198,4 +195,6 @@ def transateweb(lang):
   Available_moves=webTranslate("Available moves","en",lang)
   nexttxt=webTranslate("Next","en",lang)
   play=webTranslate("Play","en",lang)
-  return {"Available_moves":Available_moves,"next":nexttxt,"play":play}
+  move=webTranslate("Move","en",lang)
+  recomends_you=webTranslate("recomend you","en",lang)
+  return {"Available_moves":Available_moves,"next":nexttxt,"play":play,"move":move,"gregos_recomend":recomends_you}
