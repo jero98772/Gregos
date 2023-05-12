@@ -12,11 +12,11 @@ performance in a real match.
 ![1](https://github.com/jero98772/Gregos/blob/main/docs/screenshots/1.png)
 ![2](https://github.com/jero98772/Gregos/blob/main/docs/screenshots/2.png)
 ### Installing
-**Download repositories**
+**Download repositorie**
 
     git clone https://github.com/jero98772/Gregos.git
 
-**Instal:**
+**Install:**
 
     python setup.py install
 
