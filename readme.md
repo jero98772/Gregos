@@ -1,4 +1,4 @@
-# Gregos (in process)
+# Gregos 
 
 It is a chess assistant that offers recommendations of moves for the user to analyze and take into account.
 recommendations so that the user can analyze them and take them into account in future matches.
